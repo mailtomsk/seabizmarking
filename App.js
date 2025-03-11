@@ -1,24 +1,29 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import LoginScreen from './LoginScreen';
+import TabNavigator from './TabNavigator';
+import { AuthProvider, useAuth } from './AuthContext';
 
-export default function App() {
+// Main app content that uses the auth context
+function AppContent() {
+  const { isLoggedIn, login } = useAuth();
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Seabiz Marking Test</Text>
-    </View>
+    <NavigationContainer>
+      {isLoggedIn ? (
+        <TabNavigator />
+      ) : (
+        <LoginScreen onLoginSuccess={login} />
+      )}
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-  },
-});
+// Main App component that provides the auth context
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
